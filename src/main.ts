@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,13 @@ async function bootstrap() {
       bearerFormat: 'JWT',
     })
     .build();
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: false,
+      forbidNonWhitelisted: true,
+    }),
+  );
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, documentFactory);
   const configService = app.get(ConfigService);

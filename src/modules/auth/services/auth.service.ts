@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { TokenService } from './token.service';
 import { UserRepository } from '../../repository/services/user.repository';
@@ -61,10 +65,7 @@ export class AuthService {
       userId: user.id,
     });
     await Promise.all([
-      this.authCacheService.saveToken(
-        tokens.accessToken,
-        user.id,
-      ),
+      this.authCacheService.saveToken(tokens.accessToken, user.id),
       this.refreshTokenRepository.save(
         this.refreshTokenRepository.create({
           user_id: user.id,
@@ -80,9 +81,9 @@ export class AuthService {
 
   public async signOut(userData: IUserData): Promise<SignOutResDto> {
     await Promise.all([
-      this.authCacheService.deleteToken(userData.id),
+      this.authCacheService.deleteToken(userData.userId),
       this.refreshTokenRepository.delete({
-        user_id: userData.id,
+        user_id: userData.userId,
       }),
     ]);
     const sessionEndedOn = new Date();
@@ -92,23 +93,20 @@ export class AuthService {
 
   public async refresh(userData: IUserData): Promise<TokenPairResDto> {
     await Promise.all([
-      this.authCacheService.deleteToken(userData.id),
+      this.authCacheService.deleteToken(userData.userId),
       this.refreshTokenRepository.delete({
-        user_id: userData.id,
+        user_id: userData.userId,
       }),
     ]);
 
     const tokens = await this.tokenService.generateAuthTokens({
-      userId: userData.id,
+      userId: userData.userId,
     });
     await Promise.all([
-      this.authCacheService.saveToken(
-        tokens.accessToken,
-        userData.id,
-      ),
+      this.authCacheService.saveToken(tokens.accessToken, userData.userId),
       this.refreshTokenRepository.save(
         this.refreshTokenRepository.create({
-          user_id: userData.id,
+          user_id: userData.userId,
           refreshToken: tokens.refreshToken,
         }),
       ),

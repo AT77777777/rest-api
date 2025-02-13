@@ -6,6 +6,7 @@ import { RedisModule } from './modules/redis/redis.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RepositoryModule } from './modules/repository/repository.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RepositoryModule } from './modules/repository/repository.module';
     RedisModule,
     AuthModule,
     UsersModule,
+    PostsModule,
   ],
 })
 export class AppModule {}
