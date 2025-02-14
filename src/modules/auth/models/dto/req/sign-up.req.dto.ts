@@ -20,7 +20,7 @@ export class SignUpReqDto {
   @Length(3, 50)
   @Type(() => String)
   name?: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, example: '12' })
   @IsOptional()
   @IsNumberString()
   @Length(0, 50)
